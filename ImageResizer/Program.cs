@@ -15,6 +15,7 @@ namespace ImageResizer
             string destinationPath = Path.Combine(Environment.CurrentDirectory, "output"); ;
 
             ImageProcess imageProcess = new ImageProcess();
+            long orig = 0;
 
             //原始
             imageProcess.Clean(destinationPath);
@@ -22,17 +23,20 @@ namespace ImageResizer
             sw.Start();
             imageProcess.ResizeImages(sourcePath, destinationPath, 2.0);
             sw.Stop();
-            Console.WriteLine($"原始花費時間: {sw.ElapsedMilliseconds} ms");
+            orig = sw.ElapsedMilliseconds;
+            Console.WriteLine("原始花費時間:"+ orig + "ms");
 
+            long _new = 0;
             //非同步
             imageProcess.Clean(destinationPath);
             sw.Restart();
-            Console.WriteLine("縮放作業開始: " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss fff"));
+            //Console.WriteLine("縮放作業開始: " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss fff"));
             await imageProcess.ResizeImagesAsync(sourcePath, destinationPath, 2.0);
-            Console.WriteLine("縮放作業結束: " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss fff"));
+            //Console.WriteLine("縮放作業結束: " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss fff"));
             sw.Stop();
-
-            Console.WriteLine($"非同步花費時間: {sw.ElapsedMilliseconds} ms");
+            _new = sw.ElapsedMilliseconds;
+            Console.WriteLine("非同步花費時間:" + _new + "ms");
+            Console.WriteLine("效能 " +Math.Floor((double)(orig- _new)/ orig*100)+"%");
             Console.ReadKey();
         }
 
